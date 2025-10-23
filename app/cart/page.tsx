@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,11 +12,20 @@ import { TrashIcon, ArrowLeftIcon, ArrowRightIcon } from "lucide-react"
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getTotalPrice } = useCartStore()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const subtotal = getTotalPrice()
   const shipping = subtotal > 500 ? 0 : 25
   const tax = subtotal * 0.08
   const total = subtotal + shipping + tax
+
+  if (!isMounted) {
+    return <div className="container mx-auto px-4 py-12">Loading...</div>
+  }
 
   if (items.length === 0) {
     return (

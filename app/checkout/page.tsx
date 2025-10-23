@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,6 +14,17 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { items, getTotalPrice, clearCart } = useCartStore()
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (isMounted && items.length === 0) {
+      router.push("/cart")
+    }
+  }, [isMounted, items.length, router])
 
   const subtotal = getTotalPrice()
   const shipping = subtotal > 500 ? 0 : 25
@@ -31,9 +42,8 @@ export default function CheckoutPage() {
     router.push("/order-confirmation")
   }
 
-  if (items.length === 0) {
-    router.push("/cart")
-    return null
+  if (!isMounted || items.length === 0) {
+    return <div className="container mx-auto px-4 py-12">Loading...</div>
   }
 
   return (

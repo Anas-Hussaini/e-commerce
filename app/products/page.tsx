@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
@@ -12,7 +12,7 @@ import { products } from "@/data/products"
 import { formatPrice } from "@/lib/utils"
 import { FilterIcon } from "lucide-react"
 
-export default function ProductsPage() {
+function ProductsPageContent() {
   const searchParams = useSearchParams()
   const categoryParam = searchParams.get("category")
   const featuredParam = searchParams.get("featured")
@@ -172,6 +172,14 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-12">Loading...</div>}>
+      <ProductsPageContent />
+    </Suspense>
   )
 }
 
